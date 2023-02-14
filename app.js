@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -27,7 +26,6 @@ app.use((req, res) => {
   res.status(notFound).send({ message: 'Страница не найдена' });
 });
 
-app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
