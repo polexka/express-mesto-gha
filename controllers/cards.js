@@ -29,7 +29,7 @@ module.exports.deleteCardById = (req, res) => {
       return res.status(OK).send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') return res.status(notFound).send({ message: 'Карточка с указанным _id не найдена.' });
+      if (err.name === 'CastError') return res.status(notFound).send({ err, message: 'Карточка с указанным _id не найдена.' });
       return res.status(serverError).send({ message: 'Ошибка по умолчанию.' });
     });
 };
