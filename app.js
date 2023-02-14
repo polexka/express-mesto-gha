@@ -2,13 +2,13 @@ const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { DB_PATH, notFound } = require('./utils/utils');
+const { notFound } = require('./utils/errors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose.set('strictQuery', true);
-mongoose.connect(DB_PATH);
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

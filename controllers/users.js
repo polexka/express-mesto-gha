@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 const {
   OK, badRequest, serverError, notFound,
-} = require('../utils/utils');
+} = require('../utils/errors');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
