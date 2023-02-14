@@ -12,7 +12,10 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (!user) return res.status(notFound).send({ message: 'Пользователь с указанным _id не найден.' });
+      return res.status(OK).send(user);
+    })
     .catch((err) => {
       if (err.name === 'CastError') return res.status(notFound).send({ message: 'Пользователь по указанному _id не найден.' });
       return res.status(serverError).send({ message: 'Ошибка по умолчанию.' });
