@@ -23,7 +23,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findByIdAndRemove(req.params.cardId, { runValidators: true })
     .then((card) => {
       if (!card) return res.status(notFound).send({ message: 'Передан несуществующий _id карточки.' });
       return res.status(OK).send(card);
@@ -38,9 +38,7 @@ module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    {
-      new: true,
-    },
+    { new: true, runValidators: true },
   )
     .then((card) => {
       if (!card) return res.status(notFound).send({ message: 'Передан несуществующий _id карточки.' });
@@ -57,7 +55,7 @@ module.exports.dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((card) => {
       if (!card) return res.status(notFound).send({ message: 'Передан несуществующий _id карточки.' });

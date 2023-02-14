@@ -11,7 +11,7 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.params.userId)
+  User.findById(req.params.userId, { runValidators: true })
     .then((user) => {
       if (!user) return res.status(notFound).send({ message: 'Пользователь с указанным _id не найден.' });
       return res.status(OK).send(user);
