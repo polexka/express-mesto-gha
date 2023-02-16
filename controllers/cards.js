@@ -1,6 +1,6 @@
 const Card = require('../models/card');
+const { forbiddenError } = require('../utils/errors/Forbidden');
 
-const { cardAccessError } = require('../utils/errors/AccessError');
 const { notFoundError } = require('../utils/errors/NotFoundError');
 
 module.exports.getCards = (req, res, next) => {
@@ -15,14 +15,14 @@ module.exports.createCard = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send(card))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.deleteCardById = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
-      if (card.owner.toString() !== req.user._id) return Promise.reject(cardAccessError);
+      if (card.owner.toString() !== req.user._id) return Promise.reject(forbiddenError);
 
       return card;
     })
@@ -31,7 +31,7 @@ module.exports.deleteCardById = (req, res, next) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -44,7 +44,7 @@ module.exports.likeCard = (req, res, next) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.dislikeCard = (req, res, next) => {
@@ -57,5 +57,5 @@ module.exports.dislikeCard = (req, res, next) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
     })
-    .catch((err) => next(err));
+    .catch(next);
 };

@@ -24,9 +24,7 @@ app.use((req, res, next) => {
   req.headers = {
     authorization: `Bearer ${req.cookies.token}`,
   };
-  req.user = {
-    _id: '5d8b8592978f8bd833ca8133',
-  };
+
   next();
 });
 

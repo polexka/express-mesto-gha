@@ -3,7 +3,7 @@ const { signupError } = require('../utils/errors/SignupError');
 const { validationError } = require('../utils/errors/ValidationError');
 
 module.exports = (err, req, res, next) => {
-  const { statusCode = 500, message = 'Внутренняя ошибка сервера' } = err;
+  const { statusCode = 500, message = 'На сервере произошла ошибка.' } = err;
 
   if (err.name === 'CastError') {
     res.status(badRequestError.statusCode).send({ message: badRequestError.message });
