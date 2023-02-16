@@ -1,41 +1,59 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const { JWT_KEY, JWT_SALT } = require('../utils/constants');
 
-const {
-  badRequest,
-  serverError,
-  notFound,
-} = require('../utils/errors');
+const { notFoundError } = require('../utils/errors/NotFoundError');
 
-module.exports.getUsers = (req, res) => {
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_KEY, { expiresIn: '7d' });
+      res.cookie('token', token, { httpOnly: true, sameSite: true });
+
+      return res.send({ token });
+    })
+    .catch(next);
+};
+
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => res.status(serverError).send({ message: 'Ошибка по умолчанию.' }));
+    .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) return res.status(notFound).send({ message: 'Пользователь с указанным _id не найден.' });
+      if (!user) return Promise.reject(notFoundError);
       return res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') return res.status(badRequest).send({ message: 'Указан некорректный _id.' });
-      return res.status(serverError).send({ message: 'Ошибка по умолчанию.' });
-    });
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, avatar, about } = req.body;
+module.exports.getUserInfo = (req, res) => {
+  req.params.userId = req.user._id;
 
-  User.create({ name, avatar, about })
+  return this.getUserById(req, res);
+};
+
+module.exports.createUser = (req, res, next) => {
+  const {
+    email, password, name, avatar, about,
+  } = req.body;
+
+  User.init()
+    .then(() => bcrypt.hash(password, JWT_SALT))
+    .then((hash) => User.create({
+      email, password: hash, name, avatar, about,
+    }))
     .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(badRequest).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      return res.status(serverError).send({ message: 'Ошибка по умолчанию.' });
-    });
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(
@@ -47,17 +65,13 @@ module.exports.updateUser = (req, res) => {
     },
   )
     .then((user) => {
-      if (!user) return res.status(notFound).send({ message: 'Пользователь с указанным _id не найден.' });
+      if (!user) return Promise.reject(notFoundError);
       return res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(badRequest).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-      if (err.name === 'CastError') return res.status(badRequest).send({ message: 'Указан некорректный _id.' });
-      return res.status(serverError).send({ message: 'Ошибка по умолчанию.' });
-    });
+    .catch(next);
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
@@ -69,12 +83,8 @@ module.exports.updateAvatar = (req, res) => {
     },
   )
     .then((user) => {
-      if (!user) return res.status(notFound).send({ message: 'Пользователь с указанным _id не найден.' });
+      if (!user) return Promise.reject(notFoundError);
       return res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(badRequest).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
-      if (err.name === 'CastError') return res.status(badRequest).send({ message: 'Указан некорректный _id.' });
-      return res.status(serverError).send({ message: 'Ошибка по умолчанию.' });
-    });
+    .catch(next);
 };
