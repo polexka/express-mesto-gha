@@ -3,6 +3,7 @@ const router = require('express').Router();
 const {
   getUsers, getUserById, updateUser, updateAvatar, getUserInfo,
 } = require('../controllers/users');
+const { regexURL } = require('../utils/constants');
 
 router.get('/', getUsers);
 router.get('/me', getUserInfo);
@@ -22,7 +23,7 @@ router.patch('/me', celebrate({
 
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().required().regex(regexURL),
   }),
 }), updateAvatar);
 

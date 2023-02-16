@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const validator = require('validator');
 const { accountError } = require('../utils/errors/AccountError');
-const { regexURL } = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -16,10 +15,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator(v) {
-        return regexURL.test(v);
-      },
-      message: (props) => `${props.value} не является ссылкой!`,
+      validator: (v) => validator.isURL(v),
+      message: 'Некорректный URL',
     },
   },
   about: {
