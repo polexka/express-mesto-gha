@@ -8,6 +8,7 @@ const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
 const { notFoundError } = require('./utils/errors/NotFoundError');
+const { regexURL } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -42,7 +43,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required().min(8),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().regex(regexURL),
   }),
 }), createUser);
 
