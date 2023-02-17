@@ -7,6 +7,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { notFoundError } = require('./utils/errors/NotFoundError');
 const { regexURL } = require('./utils/constants');
 
@@ -20,13 +21,27 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const allowedCors = [
+  'https://praktikum.tk',
+  'http://praktikum.tk',
+  'localhost:3000',
+];
+
 app.use((req, res, next) => {
+  const { origin } = req.headers;
+
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
   req.headers = {
     authorization: `Bearer ${req.cookies.token}`,
   };
 
   next();
 });
+
+app.use(requestLogger);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -54,8 +69,8 @@ app.use((req, res) => {
   res.status(notFoundError.statusCode).send({ message: notFoundError.message });
 });
 
+app.use(errorLogger);
 app.use(errors());
-
 app.use(responseError);
 
 app.listen(PORT, () => {
