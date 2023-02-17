@@ -9,7 +9,7 @@ const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { notFoundError } = require('./utils/errors/NotFoundError');
-const { regexURL, allowedCors, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
+const { regexURL, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -23,7 +23,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   const { method } = req;
-  const { origin } = req.headers;
   const requestHeaders = req.headers['access-control-request-headers'];
 
   if (method === 'OPTIONS') {
@@ -31,9 +30,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
   }
 
-  if (allowedCors.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
+  res.header('Access-Control-Allow-Origin', '*');
 
   req.headers = {
     authorization: `Bearer ${req.cookies.token}`,
