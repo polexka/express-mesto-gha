@@ -9,7 +9,7 @@ const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { notFoundError } = require('./utils/errors/NotFoundError');
-const { regexURL } = require('./utils/constants');
+const { regexURL, allowedCors, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -21,14 +21,15 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const allowedCors = [
-  'https://praktikum.tk',
-  'http://praktikum.tk',
-  'localhost:3000',
-];
-
 app.use((req, res, next) => {
+  const { method } = req;
   const { origin } = req.headers;
+  const requestHeaders = req.headers['access-control-request-headers'];
+
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+  }
 
   if (allowedCors.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
