@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -9,9 +10,16 @@ const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { notFoundError } = require('./utils/errors/NotFoundError');
+// eslint-disable-next-line no-unused-vars
 const { regexURL, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
+const allowedCors = ['https://api.mesto-polka.students.nomoredomains.work', 'https://mesto-polexka.students.nomoredomains.work/'];
+const corsOptions = {
+  origin: allowedCors,
+  optionsSuccessStatus: 200,
+  credentials: true,
+};
 const app = express();
 app.use(cookieParser());
 
@@ -21,23 +29,26 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  const { method } = req;
-  const requestHeaders = req.headers['access-control-request-headers'];
+app.use(cors(corsOptions));
 
-  if (method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Headers', requestHeaders);
-    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-  }
+// app.use((req, res, next) => {
+//   const { method } = req;
+//   const requestHeaders = req.headers['access-control-request-headers'];
 
-  res.header('Access-Control-Allow-Origin', '*');
+//   if (method === 'OPTIONS') {
+//     res.header('Access-Control-Allow-Headers', requestHeaders);
+//     res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+//     return res.end();
+//   }
 
-  req.headers = {
-    authorization: `Bearer ${req.cookies.token}`,
-  };
+//   res.header('Access-Control-Allow-Origin', '*');
 
-  next();
-});
+//   req.headers = {
+//     authorization: `Bearer ${req.cookies.token}`,
+//   };
+
+//   return next();
+// });
 
 app.use(requestLogger);
 
