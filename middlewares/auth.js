@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { getUserInfo } = require('../controllers/users');
 const { JWT_KEY } = require('../utils/constants');
 const { authError } = require('../utils/errors/AccountError');
 
@@ -18,8 +17,7 @@ module.exports = (req, res, next) => {
     return res.status(authError.statusCode).send({ message: authError.message });
   }
 
-  req.user = payload;
-  req.user = getUserInfo();
+  req.user._id = payload;
 
   return next();
 };
