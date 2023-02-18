@@ -14,7 +14,7 @@ const { notFoundError } = require('./utils/errors/NotFoundError');
 const { regexURL, DEFAULT_ALLOWED_METHODS } = require('./utils/constants');
 
 const { PORT = 3000 } = process.env;
-const allowedCors = ['https://api.mesto-polka.students.nomoredomains.work', 'https://mesto-polexka.students.nomoredomains.work/'];
+const allowedCors = ['https://api.mesto-polka.students.nomoredomains.work', 'https://mesto-polexka.students.nomoredomains.work'];
 const corsOptions = {
   origin: allowedCors,
   optionsSuccessStatus: 200,
