@@ -33,11 +33,19 @@ module.exports.getUserById = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.authUserInfo = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) return Promise.reject(notFoundError);
+      return user;
+    })
+    .catch(next);
+};
+
 module.exports.getUserInfo = (req, res) => {
   req.params.userId = req.user._id;
 
-  // return this.getUserById(req, res);
-  return res.status(500).send({message: req.params.userId});
+  return this.getUserById(req, res);
 };
 
 module.exports.createUser = (req, res, next) => {

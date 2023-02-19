@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
-const { login, createUser, getUserInfo } = require('./controllers/users');
+const { login, createUser, getUserInfo, authUserInfo } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -61,9 +61,9 @@ app.post('/signup', celebrate({
 app.use(auth);
 
 app.use((req, res, next) => {
-  const userObj = getUserInfo(req, res);
+  const userObj = authUserInfo(req, res);
   // return res.status(500).send({message: req.user})
-  req.user = userObj;
+  // req.user = userObj;
 
   return next();
 });
