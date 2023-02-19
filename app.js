@@ -62,7 +62,7 @@ app.use(auth);
 
 app.use((req, res, next) => {
   const userObj = getUserInfo(req, res);
-  return res.status(500).send({message: req.user});
+  return res.status(500).send({message: userObj});
   // req.user = userObj;
 
   // return next();
