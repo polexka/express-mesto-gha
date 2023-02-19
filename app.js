@@ -64,13 +64,13 @@ app.post('/signup', celebrate({
 
 app.use(auth);
 
-app.use((req, res, next) => {
-  // const userObj = authUserInfo(req, res);
-  return res.status(500).send({ message: authUserInfo(req, res) });
-  // req.user = userObj;
+// app.use((req, res, next) => {
+//   const userObj = authUserInfo(req, res);
+//   return res.status(500).send({ message: userObj });
+//   // req.user = userObj;
 
-  // return next();
-});
+//   return next();
+// });
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
