@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
     return res.status(authError.statusCode).send({ message: authError.message });
   }
 
-  req.user = payload;
+  req.user._id = payload;
 
   return next();
 };
