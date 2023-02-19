@@ -14,7 +14,11 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user })
-    .then((card) => res.send(card))
+    .then((card) => Card.findById(card.cardId).populate('owner'))
+    .then((card) => {
+      if (!card) return Promise.reject(notFoundError);
+      return res.send(card);
+    })
     .catch(next);
 };
 
