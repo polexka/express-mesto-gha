@@ -61,7 +61,7 @@ app.post('/signup', celebrate({
 app.use(auth);
 
 app.use((req, res, next) => {
-  // const userObj = getUserInfo(req, res);
+  const userObj = getUserInfo(req, res);
   return res.status(500).send({message: req.user});
   // req.user = userObj;
 
