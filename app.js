@@ -8,7 +8,6 @@ const { celebrate, Joi, errors } = require('celebrate');
 const {
   login,
   createUser,
-  authUserInfo,
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const responseError = require('./middlewares/responseError');
