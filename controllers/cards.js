@@ -26,7 +26,8 @@ module.exports.deleteCardById = (req, res, next) => {
 
       return card;
     })
-    .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true })
+    .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true }))
+
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
