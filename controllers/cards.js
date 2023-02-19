@@ -27,11 +27,10 @@ module.exports.deleteCardById = (req, res, next) => {
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       if (card.owner._id.toString() !== req.user._id) return Promise.reject(forbiddenError);
-
       return card;
     })
     .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true }))
-
+    .populate('owner')
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);

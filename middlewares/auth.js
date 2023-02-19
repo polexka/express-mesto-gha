@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { getUserInfo } = require('../controllers/users');
 const { JWT_KEY } = require('../utils/constants');
 const { authError } = require('../utils/errors/AccountError');
 
