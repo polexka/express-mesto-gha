@@ -23,7 +23,7 @@ module.exports = (req, res, next) => {
 
   const user = await getUserInfo(req, res, next);
 
-  return res.status(200).send({ message: user });
+  return res.status(201).send({ message: user });
 
   // return next();
 };
