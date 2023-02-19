@@ -61,8 +61,11 @@ app.post('/signup', celebrate({
 app.use(auth);
 
 app.use((req, res, next) => {
-  req.user = getUserInfo;
-
+  getUserInfo()
+    .then((user) => {
+      req.user = user;
+    })
+    .catch(next);
   return next();
 });
 

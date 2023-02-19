@@ -18,7 +18,6 @@ module.exports = (req, res, next) => {
   }
 
   // сюда попадает { ._id = бла бла бла}
-  console.log(payload);
   req.user = payload;
 
   return next();
