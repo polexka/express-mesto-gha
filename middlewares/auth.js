@@ -21,9 +21,5 @@ module.exports = (req, res, next) => {
   // сюда попадает { ._id = бла бла бла}
   req.user = payload;
 
-  const user = await getUserInfo(req, res, next);
-
-  // return res.status(200).send({ message: user });
-
   return next();
 };

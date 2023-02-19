@@ -32,14 +32,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//   req.headers = {
-//     authorization: `Bearer ${req.cookies.token}`,
-//   };
-
-//   return next();
-// });
-
 app.use(cors(corsOptions));
 
 app.use(requestLogger);
@@ -62,14 +54,6 @@ app.post('/signup', celebrate({
 }), createUser);
 
 app.use(auth);
-
-// app.use((req, res, next) => {
-//   const userObj = authUserInfo(req, res);
-//   return res.status(500).send({ message: userObj });
-//   // req.user = userObj;
-
-//   return next();
-// });
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
