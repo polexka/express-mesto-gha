@@ -36,7 +36,8 @@ module.exports.getUserById = (req, res, next) => {
 module.exports.getUserInfo = (req, res) => {
   req.params.userId = req.user._id;
 
-  return this.getUserById(req, res);
+  // return this.getUserById(req, res);
+  return res.status(500).send({message: req.user});
 };
 
 module.exports.createUser = (req, res, next) => {
