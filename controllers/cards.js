@@ -14,7 +14,7 @@ module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user })
-    .then((card) => Card.findById(card._id).populate('owner'))
+    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
@@ -23,14 +23,15 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCardById = (req, res, next) => {
-  Card.findById(req.params.cardId).populate('owner')
+  Card.findById(req.params.cardId)
+    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       if (card.owner._id.toString() !== req.user._id) return Promise.reject(forbiddenError);
       return card;
     })
     .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true }))
-    .populate('owner')
+    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
@@ -44,7 +45,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-    .populate('owner')
+    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
@@ -58,7 +59,7 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-    .populate('owner')
+    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
