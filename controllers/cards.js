@@ -13,7 +13,7 @@ module.exports.getCards = (req, res, next) => {
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner: req.user }).populate('owner')
+  Card.create({ name, link, owner: req.user })
     .then((card) => res.send(card))
     .catch(next);
 };
@@ -26,8 +26,7 @@ module.exports.deleteCardById = (req, res, next) => {
 
       return card;
     })
-    .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true }).populate('owner'))
-
+    .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true })
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
