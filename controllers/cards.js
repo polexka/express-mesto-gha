@@ -24,14 +24,15 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCardById = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
+      return card.populate('owner');
+    })
+    .then((card) => {
       if (card.owner._id.toString() !== req.user._id) return Promise.reject(forbiddenError);
       return card;
     })
     .then(() => Card.findByIdAndRemove(req.params.cardId, { runValidators: true }))
-    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
       return res.send(card);
@@ -45,11 +46,12 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
-      return res.send(card);
+      return card;
     })
+    .then((card) => card.populate('owner'))
+    .then((card) => res.send(card))
     .catch(next);
 };
 
@@ -59,10 +61,11 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true, runValidators: true },
   )
-    .then((card) => card.populate('owner'))
     .then((card) => {
       if (!card) return Promise.reject(notFoundError);
-      return res.send(card);
+      return card;
     })
+    .then((card) => card.populate('owner'))
+    .then((card) => res.send(card))
     .catch(next);
 };
